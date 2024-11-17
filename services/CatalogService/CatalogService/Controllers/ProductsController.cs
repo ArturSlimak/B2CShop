@@ -1,4 +1,5 @@
-﻿using CatalogService.Models;
+﻿using CatalogService.DTOs;
+using CatalogService.Models;
 using CatalogService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,13 @@ namespace CatalogService.Controllers
 
         [HttpGet]
         public async Task<List<Product>> Get() => await _productsService.GetAsync();
+
+        [HttpPost]
+        public async Task<IActionResult> Post(ProductDTO.Create newProduct)
+        {
+            var createdProduct = await _productsService.CreateAsync(newProduct);
+            return CreatedAtAction(nameof(Get), new { id = createdProduct.Id }, createdProduct);
+        }
 
     }
 }

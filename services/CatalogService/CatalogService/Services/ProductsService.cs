@@ -20,21 +20,28 @@ public class ProductsService
         _mapper = mapper;
     }
 
-    public async Task<List<ProductDTO.Index>> GetAsync(ProductRequest.Index request)
+    public async Task<ProductResponse.GetIndex> GetAsync(ProductRequest.Index request)
     {
         var products = await _productsCollection.Find(_ => true)
             .Skip((request.Page - 1) * request.PageSize)
             .Limit(request.PageSize)
             .ToListAsync();
         var productDTOs = _mapper.Map<List<ProductDTO.Index>>(products);
-        return productDTOs;
+        var pageSize = productDTOs.Count;
+        var response = new ProductResponse.GetIndex
+        {
+            Products = productDTOs,
+            PageSize = pageSize,
+            Page = request.Page,
+        };
+        return response;
     }
 
-    public async Task<Product> CreateAsync(ProductRequest.Create request)
+    public async Task<ProductResponse.Create> CreateAsync(ProductRequest.Create request)
     {
         var product = _mapper.Map<Product>(request.Product);
         await _productsCollection.InsertOneAsync(product);
-        return product;
+        return new ProductResponse.Create { ProductId = product.Id };
     }
 
 }

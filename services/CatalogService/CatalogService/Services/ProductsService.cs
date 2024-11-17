@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CatalogService.DTOs;
+using CatalogService.Helpers;
 using CatalogService.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -19,16 +20,19 @@ public class ProductsService
         _mapper = mapper;
     }
 
-    public async Task<List<ProductDTO.Index>> GetAsync()
+    public async Task<List<ProductDTO.Index>> GetAsync(ProductRequest.Index request)
     {
-        var products = await _productsCollection.Find(_ => true).ToListAsync();
+        var products = await _productsCollection.Find(_ => true)
+            .Skip((request.Page - 1) * request.PageSize)
+            .Limit(request.PageSize)
+            .ToListAsync();
         var productDTOs = _mapper.Map<List<ProductDTO.Index>>(products);
         return productDTOs;
     }
 
-    public async Task<Product> CreateAsync(ProductDTO.Create newProduct)
+    public async Task<Product> CreateAsync(ProductRequest.Create request)
     {
-        var product = _mapper.Map<Product>(newProduct);
+        var product = _mapper.Map<Product>(request.Product);
         await _productsCollection.InsertOneAsync(product);
         return product;
     }

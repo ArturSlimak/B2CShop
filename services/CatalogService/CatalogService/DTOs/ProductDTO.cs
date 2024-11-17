@@ -11,7 +11,7 @@ public class ProductDTO
 
     }
 
-    public class Create
+    public class Mutate
     {
         public string ProductName { get; set; } = null!;
         public decimal Price { get; set; }

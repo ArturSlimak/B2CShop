@@ -19,7 +19,12 @@ public class ProductsService
         _mapper = mapper;
     }
 
-    public async Task<List<Product>> GetAsync() => await _productsCollection.Find(_ => true).ToListAsync();
+    public async Task<List<ProductDTO.Index>> GetAsync()
+    {
+        var products = await _productsCollection.Find(_ => true).ToListAsync();
+        var productDTOs = _mapper.Map<List<ProductDTO.Index>>(products);
+        return productDTOs;
+    }
 
     public async Task<Product> CreateAsync(ProductDTO.Create newProduct)
     {

@@ -3,14 +3,12 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace CatalogService.Models;
 
-public class Product
+public class Product : Entity
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string? Id { get; set; }
 
-    [BsonElement("Name")]
+    [BsonElement("name")]
     public string ProductName { get; set; } = null!;
 
+    [BsonElement("price")]
     public decimal Price { get; set; }
 }

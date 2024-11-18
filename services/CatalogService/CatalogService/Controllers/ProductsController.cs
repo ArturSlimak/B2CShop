@@ -9,13 +9,22 @@ namespace CatalogService.Controllers
     public class ProductsController : ControllerBase
     {
 
+        private readonly ILogger<ProductsController> _logger;
+
         private readonly ProductsService _productsService;
 
-        public ProductsController(ProductsService productsService) =>
+        public ProductsController(ProductsService productsService, ILogger<ProductsController> logger)
+        {
             _productsService = productsService;
+            _logger = logger;
+        }
 
         [HttpGet]
-        public async Task<ProductResponse.GetIndex> Get([FromQuery] ProductRequest.Index request) => await _productsService.GetAsync(request);
+        public async Task<ProductResponse.GetIndex> Get([FromQuery] ProductRequest.Index request)
+        {
+            var response = await _productsService.GetAsync(request);
+            return response;
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductRequest.Create request)

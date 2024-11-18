@@ -1,4 +1,6 @@
-﻿using CatalogService.Helpers;
+﻿using CatalogService.DTOs;
+using CatalogService.Extensions;
+using CatalogService.Helpers;
 using CatalogService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,8 +30,11 @@ namespace CatalogService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ProductRequest.Create request)
+        public async Task<IActionResult> Post([FromBody] ProductDTO.Mutate request)
         {
+            if (!ModelState.IsValid)
+                throw new ValidationFailException(ModelState);
+
             var response = await _productsService.CreateAsync(request);
             _logger.LogInformation("Added a new product {@Product}", response);
             return CreatedAtAction(nameof(Get), new { id = response.ProductId });

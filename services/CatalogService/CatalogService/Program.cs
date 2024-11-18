@@ -1,6 +1,9 @@
 using CatalogService.Extensions;
+using CatalogService.Helpers;
 using CatalogService.Models;
 using CatalogService.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Serilog;
 
 
@@ -17,8 +20,16 @@ builder.Services.AddSingleton<ProductsService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
+
+//Validation
+builder.Services.AddValidatorsFromAssemblyContaining<ProductRequest.Create.Validator>();
+builder.Services.AddFluentValidationAutoValidation();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -9,6 +9,8 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     {
         var problemDetails = new ProblemDetails();
         problemDetails.Instance = httpContext.Request.Path;
+        problemDetails.Extensions["method"] = httpContext.Request.Method;
+
         if (exception is BaseException e)
         {
             httpContext.Response.StatusCode = (int)e.StatusCode;

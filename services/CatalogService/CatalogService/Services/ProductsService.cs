@@ -37,9 +37,9 @@ public class ProductsService
         return response;
     }
 
-    public async Task<ProductResponse.Create> CreateAsync(ProductDTO.Mutate request)
+    public async Task<ProductResponse.Create> CreateAsync(ProductRequest.Create request)
     {
-        var product = _mapper.Map<Product>(request);
+        var product = _mapper.Map<Product>(request.Product);
         await _productsCollection.InsertOneAsync(product);
         return new ProductResponse.Create { ProductId = product.Id };
     }

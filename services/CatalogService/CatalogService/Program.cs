@@ -29,6 +29,8 @@ builder.Services.AddControllers()
 
 //Validation
 builder.Services.AddValidatorsFromAssemblyContaining<ProductRequest.Create.Validator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ProductRequest.Index.Validator>();
+
 builder.Services.AddFluentValidationAutoValidation();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

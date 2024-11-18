@@ -16,10 +16,11 @@ public class ValidationFailException : BaseException
             .Where(ms => ms.Value?.Errors.Count > 0)
             .Select(ms => new
             {
+                Field = ms.Key,
                 Errors = ms.Value?.Errors.Select(e => e.ErrorMessage).ToArray() ?? []
             })
             .ToArray();
 
-        return string.Join("; ", errors.Select(e => $"{string.Join(", ", e.Errors)}"));
+        return string.Join("; ", errors.Select(e => $"{e.Field}: {string.Join(", ", e.Errors)}"));
     }
 }

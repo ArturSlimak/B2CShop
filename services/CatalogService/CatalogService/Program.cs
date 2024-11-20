@@ -9,6 +9,14 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+
+    configuration.ReadFrom.Configuration(context.Configuration);
+
+    configuration.ReadFrom.Services(services);
+});
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -37,13 +45,6 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Host.UseSerilog((context, services, configuration) =>
-{
-
-    configuration.ReadFrom.Configuration(context.Configuration);
-
-    configuration.ReadFrom.Services(services);
-});
 
 
 

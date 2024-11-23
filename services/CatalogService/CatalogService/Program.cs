@@ -5,6 +5,9 @@ using CatalogService.Models;
 using CatalogService.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 
 
@@ -18,6 +21,24 @@ builder.Host.UseSerilog((context, services, configuration) =>
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+
+// Health
+builder.Services.AddHealthChecks()
+    .AddMongoDb(
+        mongodbConnectionString: builder.Configuration.GetSection("MongoDB").Get<CatalogDBSettings>().ConnectionString,
+        name: "Database", failureStatus: HealthStatus.Unhealthy,
+        tags: new string[] { "catalogdb" });
+
+builder.Services.AddHealthChecksUI(
+    options =>
+    {
+        options.SetEvaluationTimeInSeconds(10);
+        options.SetMinimumSecondsBetweenFailureNotifications(60);
+        options.MaximumHistoryEntriesPerEndpoint(50);
+        options.AddHealthCheckEndpoint("Catalog Service Health", "/health");
+    }
+    ).AddInMemoryStorage();
 
 
 // Versioning
@@ -73,6 +94,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.UseHealthChecksUI(config => config.UIPath = "/health-ui");
 
 app.UseExceptionHandler();
 

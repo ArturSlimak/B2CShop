@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using CatalogService.Extensions;
 using CatalogService.Helpers;
 using CatalogService.Models;
@@ -11,14 +12,29 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, services, configuration) =>
 {
-
     configuration.ReadFrom.Configuration(context.Configuration);
-
     configuration.ReadFrom.Services(services);
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+
+// Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1);
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
+        new UrlSegmentApiVersionReader(),
+        new HeaderApiVersionReader("X-Api-Version"));
+})
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 
 // Add services to the container.

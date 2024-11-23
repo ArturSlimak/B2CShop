@@ -18,7 +18,8 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         }
         else
         {
-            problemDetails.Title = exception.Message;
+            problemDetails.Title = "An error occurred";
+
         }
         logger.LogError("{ProblemDetailsTitle}", problemDetails.Title);
         problemDetails.Status = httpContext.Response.StatusCode;
